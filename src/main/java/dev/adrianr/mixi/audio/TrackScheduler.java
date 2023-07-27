@@ -5,10 +5,17 @@ import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
+import dev.adrianr.mixi.App;
+import dev.adrianr.mixi.MessageComposer;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
+
+import java.util.ArrayDeque;
 
 public class TrackScheduler extends AudioEventAdapter {
 
     private AudioPlayer player;
+    private ArrayDeque<AudioTrack> queue = new ArrayDeque<>();
 
     public TrackScheduler(AudioPlayer player) {
         this.player = player;
@@ -27,12 +34,22 @@ public class TrackScheduler extends AudioEventAdapter {
     @Override
     public void onTrackStart(AudioPlayer player, AudioTrack track) {
         // A track started playing
+        System.out.println("STARTED PLAYING TRACK: " + track.getIdentifier());
+        App.getJDA().getChannelById(MessageChannel.class, "748313304400920619").sendMessageEmbeds(MessageComposer.getPlayingTrackMessageEmbed(track))
+                .addActionRow(
+                        Button.primary("next", "Siguiente"),
+                        Button.primary("pause", "Pausar"))
+                .queue();
     }
 
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
         if (endReason.mayStartNext) {
             // Start next track
+            queue.remove(track);
+            if (!queue.isEmpty()) {
+                player.playTrack(queue.getFirst());
+            }
         }
 
         // endReason == FINISHED: A track finished or died by an exception (mayStartNext = true).
@@ -51,9 +68,22 @@ public class TrackScheduler extends AudioEventAdapter {
     @Override
     public void onTrackStuck(AudioPlayer player, AudioTrack track, long thresholdMs) {
         // Audio track has been unable to provide us any audio, might want to just start a new track
+        queue.remove(track);
+        if (!queue.isEmpty()) {
+            player.playTrack(queue.getFirst());
+        }
     }
 
     public void queue(AudioTrack track) {
-        player.playTrack(track);
+        queue.add(track);
+        System.out.println("ADDED TRACK TO THE QUEUE: " + track.getInfo().title);
+        if (queue.size() == 1) {
+            player.playTrack(track);
+        }
+    }
+
+    public void pause() {
+        player.setPaused(!player.isPaused());
+
     }
 }

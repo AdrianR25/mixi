@@ -1,6 +1,7 @@
 package dev.adrianr.mixi;
 
 import dev.adrianr.mixi.commands.PlayCommand;
+import dev.adrianr.mixi.listeners.ButtonInteractionListener;
 import dev.adrianr.mixi.listeners.GuildReadyListener;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -10,16 +11,22 @@ import net.dv8tion.jda.api.utils.cache.CacheFlag;
 
 public class App {
 
+    private static JDA jda;
+
     public static void main(String[] args) {
 
-        JDABuilder builder = JDABuilder.createDefault("MTExOTMwNjU2NzI0NjkzODE3Mg.GSr8aX.ea03qqY2DzCRnDpOmUEHwU8_LmnnXHdnNLV_vg")
+        JDABuilder builder = JDABuilder.createDefault("")
                 .enableIntents(GatewayIntent.MESSAGE_CONTENT)
                 .disableCache(CacheFlag.MEMBER_OVERRIDES, CacheFlag.VOICE_STATE)
                 .setBulkDeleteSplittingEnabled(false)
                 .setActivity(Activity.listening("música"))
-                .addEventListeners(new GuildReadyListener(), new PlayCommand());
+                .addEventListeners(new GuildReadyListener(), new PlayCommand(), new ButtonInteractionListener());
 
-        JDA jda = builder.build();
+        jda = builder.build();
 
+    }
+
+    public static JDA getJDA(){
+        return jda;
     }
 }

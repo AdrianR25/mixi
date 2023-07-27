@@ -8,12 +8,12 @@ import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import dev.adrianr.mixi.audio.AudioPlayerManagerInstance;
 import dev.adrianr.mixi.audio.AudioPlayerSendHandler;
+import dev.adrianr.mixi.audio.TrackSchedulerInstance;
 import dev.adrianr.mixi.audio.TrackScheduler;
 import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.managers.AudioManager;
-import org.slf4j.Logger;
 
 public class PlayCommand extends ListenerAdapter {
 
@@ -33,7 +33,8 @@ public class PlayCommand extends ListenerAdapter {
         AudioPlayerManager playerManager = AudioPlayerManagerInstance.getAudioPlayerManager();
         AudioPlayer player = playerManager.createPlayer();
 
-        TrackScheduler trackScheduler = new TrackScheduler(player);
+
+        TrackScheduler trackScheduler = TrackSchedulerInstance.getTrackScheduler(player);
         player.addListener(trackScheduler);
 
         playerManager.loadItem(identifier, new AudioLoadResultHandler() {
@@ -66,7 +67,10 @@ public class PlayCommand extends ListenerAdapter {
 
         VoiceChannel voiceChannel = event.getGuild().getVoiceChannelById("751817924288970753");
         AudioManager audioManager = event.getGuild().getAudioManager();
-        audioManager.openAudioConnection(voiceChannel);
-        audioManager.setSendingHandler(new AudioPlayerSendHandler(player));
+        if (!audioManager.isConnected()){
+            audioManager.setSelfDeafened(true);
+            audioManager.openAudioConnection(voiceChannel);
+            audioManager.setSendingHandler(new AudioPlayerSendHandler(player));
+        }
     }
 }
