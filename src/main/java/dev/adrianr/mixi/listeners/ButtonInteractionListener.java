@@ -17,11 +17,22 @@ public class ButtonInteractionListener extends ListenerAdapter {
         AudioPlayerManager playerManager = AudioPlayerManagerInstance.getAudioPlayerManager();
         AudioPlayer player = playerManager.createPlayer();
 
-        if (event.getComponentId().equals("pause")) {
-            TrackSchedulerInstance.getTrackScheduler(player).pause();
-
-            String label = event.getButton().getLabel().equals("Pausar") ? "Reanudar" : "Pausar";
-            event.editButton(Button.primary("pause", label)).queue();
+        switch (event.getComponentId()) {
+            case "pause" -> {
+                TrackSchedulerInstance.getTrackScheduler(player).pause();
+                String label = event.getButton().getLabel().equals("Pausar") ? "Reanudar" : "Pausar";
+                event.editButton(Button.primary("pause", label)).queue();
+            }
+            case "next" -> {
+                TrackSchedulerInstance.getTrackScheduler(player).next();
+                event.getMessage().delete().queue();
+            }
+            case "disconnect" -> {
+                event.getGuild().getAudioManager().closeAudioConnection();
+                event.editButton(event.getButton().asDisabled()).queue();
+            }
         }
+
+
     }
 }

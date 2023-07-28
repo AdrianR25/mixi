@@ -44,12 +44,23 @@ public class TrackScheduler extends AudioEventAdapter {
 
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
+        boolean sendMessage = false;
         if (endReason.mayStartNext) {
             // Start next track
             queue.remove(track);
             if (!queue.isEmpty()) {
                 player.playTrack(queue.getFirst());
+            } else {
+                sendMessage = true;
             }
+
+        } else if (endReason == AudioTrackEndReason.STOPPED) sendMessage = true;
+
+        if (sendMessage) {
+            App.getJDA().getChannelById(MessageChannel.class, "748313304400920619").sendMessageEmbeds(MessageComposer.getFinishedQueueMessageEmbed())
+                    .addActionRow(
+                            Button.danger("disconnect", "Desconectar"))
+                    .queue();
         }
 
         // endReason == FINISHED: A track finished or died by an exception (mayStartNext = true).
@@ -85,5 +96,19 @@ public class TrackScheduler extends AudioEventAdapter {
     public void pause() {
         player.setPaused(!player.isPaused());
 
+    }
+
+    public void next() {
+        if (!queue.isEmpty()) queue.removeFirst();
+
+        if (!queue.isEmpty()) {
+            player.playTrack(queue.getFirst());
+        } else {
+            player.stopTrack();
+        }
+    }
+
+    public void clearQueue() {
+        queue.clear();
     }
 }

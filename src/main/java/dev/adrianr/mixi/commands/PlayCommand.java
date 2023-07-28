@@ -6,6 +6,7 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import dev.adrianr.mixi.MessageComposer;
 import dev.adrianr.mixi.audio.AudioPlayerManagerInstance;
 import dev.adrianr.mixi.audio.AudioPlayerSendHandler;
 import dev.adrianr.mixi.audio.TrackSchedulerInstance;
@@ -41,7 +42,7 @@ public class PlayCommand extends ListenerAdapter {
             @Override
             public void trackLoaded(AudioTrack track) {
                 trackScheduler.queue(track);
-                event.getHook().sendMessage("Track loaded").queue();
+                event.getHook().sendMessageEmbeds(MessageComposer.getAddedTrackMessageEmbed(track)).queue();
             }
 
             @Override
@@ -67,6 +68,7 @@ public class PlayCommand extends ListenerAdapter {
 
         VoiceChannel voiceChannel = event.getGuild().getVoiceChannelById("751817924288970753");
         AudioManager audioManager = event.getGuild().getAudioManager();
+        System.out.println("is connected: " + audioManager.isConnected());
         if (!audioManager.isConnected()){
             audioManager.setSelfDeafened(true);
             audioManager.openAudioConnection(voiceChannel);

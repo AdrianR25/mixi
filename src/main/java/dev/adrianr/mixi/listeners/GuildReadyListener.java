@@ -3,6 +3,7 @@ package dev.adrianr.mixi.listeners;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 
 public class GuildReadyListener extends ListenerAdapter {
@@ -12,7 +13,8 @@ public class GuildReadyListener extends ListenerAdapter {
         super.onGuildReady(event);
         event.getGuild().updateCommands().addCommands(
                 Commands.slash("play", "Busca y reproduce música.")
-                        .addOption(OptionType.STRING, "identifier", "El link o búsqueda.")
+                        .addOption(OptionType.STRING, "identifier", "El link o búsqueda.", true),
+                Commands.slash("clear", "Limpia la cola.")
         ).queue();
         System.out.println("Comandos registrados");
     }

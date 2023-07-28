@@ -1,5 +1,6 @@
 package dev.adrianr.mixi;
 
+import dev.adrianr.mixi.commands.ClearCommand;
 import dev.adrianr.mixi.commands.PlayCommand;
 import dev.adrianr.mixi.listeners.ButtonInteractionListener;
 import dev.adrianr.mixi.listeners.GuildReadyListener;
@@ -20,7 +21,7 @@ public class App {
                 .disableCache(CacheFlag.MEMBER_OVERRIDES, CacheFlag.VOICE_STATE)
                 .setBulkDeleteSplittingEnabled(false)
                 .setActivity(Activity.listening("música"))
-                .addEventListeners(new GuildReadyListener(), new PlayCommand(), new ButtonInteractionListener());
+                .addEventListeners(new GuildReadyListener(), new PlayCommand(), new ClearCommand(), new ButtonInteractionListener());
 
         jda = builder.build();
 
