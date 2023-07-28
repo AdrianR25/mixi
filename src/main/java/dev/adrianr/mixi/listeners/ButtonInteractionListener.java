@@ -1,8 +1,6 @@
 package dev.adrianr.mixi.listeners;
 
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
-import dev.adrianr.mixi.audio.AudioPlayerManagerInstance;
+import dev.adrianr.mixi.audio.TrackScheduler;
 import dev.adrianr.mixi.audio.TrackSchedulerInstance;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -13,22 +11,21 @@ public class ButtonInteractionListener extends ListenerAdapter {
     public void onButtonInteraction(ButtonInteractionEvent event) {
         super.onButtonInteraction(event);
 
-        // Get audio manager. This is a singleton, as a player manager manages several thread pools which make no sense to duplicate.
-        AudioPlayerManager playerManager = AudioPlayerManagerInstance.getAudioPlayerManager();
-        AudioPlayer player = playerManager.createPlayer();
+        TrackScheduler scheduler = TrackSchedulerInstance.getTrackScheduler();
 
         switch (event.getComponentId()) {
             case "pause" -> {
-                TrackSchedulerInstance.getTrackScheduler(player).pause();
+                if (scheduler != null) scheduler.pause();
                 String label = event.getButton().getLabel().equals("Pausar") ? "Reanudar" : "Pausar";
                 event.editButton(Button.primary("pause", label)).queue();
             }
             case "next" -> {
-                TrackSchedulerInstance.getTrackScheduler(player).next();
+                if (scheduler != null) scheduler.next();
                 event.getMessage().delete().queue();
             }
             case "disconnect" -> {
                 event.getGuild().getAudioManager().closeAudioConnection();
+                TrackSchedulerInstance.destroy();
                 event.editButton(event.getButton().asDisabled()).queue();
             }
         }

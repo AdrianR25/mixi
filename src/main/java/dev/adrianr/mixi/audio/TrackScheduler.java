@@ -14,8 +14,8 @@ import java.util.ArrayDeque;
 
 public class TrackScheduler extends AudioEventAdapter {
 
-    private AudioPlayer player;
-    private ArrayDeque<AudioTrack> queue = new ArrayDeque<>();
+    private final AudioPlayer player;
+    private final ArrayDeque<AudioTrack> queue = new ArrayDeque<>();
 
     public TrackScheduler(AudioPlayer player) {
         this.player = player;
