@@ -50,7 +50,7 @@ public class PlayCommand extends ListenerAdapter {
                 for (AudioTrack track : playlist.getTracks()) {
                     trackScheduler.queue(track);
                 }
-                event.getHook().sendMessage("Playlist loaded").queue();
+                event.getHook().sendMessageEmbeds(MessageComposer.getAddedPlaylistMessageEmbed(playlist)).queue();
             }
 
             @Override
