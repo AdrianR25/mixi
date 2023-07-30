@@ -6,7 +6,7 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import dev.adrianr.mixi.MessageComposer;
+import dev.adrianr.mixi.misc.MessageComposer;
 import dev.adrianr.mixi.audio.AudioPlayerManagerInstance;
 import dev.adrianr.mixi.audio.AudioPlayerSendHandler;
 import dev.adrianr.mixi.audio.TrackSchedulerInstance;

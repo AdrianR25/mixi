@@ -4,6 +4,7 @@ import dev.adrianr.mixi.commands.ClearCommand;
 import dev.adrianr.mixi.commands.PlayCommand;
 import dev.adrianr.mixi.listeners.ButtonInteractionListener;
 import dev.adrianr.mixi.listeners.GuildReadyListener;
+import dev.adrianr.mixi.misc.ConfigHandler;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
@@ -16,7 +17,13 @@ public class App {
 
     public static void main(String[] args) {
 
-        JDABuilder builder = JDABuilder.createDefault("")
+        String token = ConfigHandler.getProperty("botToken");
+        if (token.equals("YOUR TOKEN HERE")) {
+            System.out.println("Bot is running for the first time. Please set it up in the config.properties file.");
+            return;
+        }
+
+        JDABuilder builder = JDABuilder.createDefault(token)
                 .enableIntents(GatewayIntent.MESSAGE_CONTENT)
                 .disableCache(CacheFlag.MEMBER_OVERRIDES, CacheFlag.VOICE_STATE)
                 .setBulkDeleteSplittingEnabled(false)

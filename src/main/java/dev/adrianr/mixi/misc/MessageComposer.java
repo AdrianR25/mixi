@@ -1,4 +1,4 @@
-package dev.adrianr.mixi;
+package dev.adrianr.mixi.misc;
 
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
@@ -17,7 +17,7 @@ public class MessageComposer {
 
         builder.setTitle(track.getInfo().title, track.getInfo().uri);
         builder.setDescription(track.getInfo().author);
-        builder.addField("Duración", Utils.formatMillisToDuration(track.getInfo().length), true);
+        builder.addField("Duración", Utils.formatMillisToString(track.getInfo().length), true);
         return builder.build();
     }
 
@@ -58,7 +58,7 @@ public class MessageComposer {
         for (AudioTrack track : playlist.getTracks()) {
             totalDuration += track.getDuration();
         }
-        builder.addField("Duración", Utils.formatMillisToDuration(totalDuration), true);
+        builder.addField("Duración", Utils.formatMillisToString(totalDuration), true);
 
         return builder.build();
     }

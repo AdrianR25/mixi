@@ -1,6 +1,6 @@
 package dev.adrianr.mixi.commands;
 
-import dev.adrianr.mixi.MessageComposer;
+import dev.adrianr.mixi.misc.MessageComposer;
 import dev.adrianr.mixi.audio.TrackScheduler;
 import dev.adrianr.mixi.audio.TrackSchedulerInstance;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
