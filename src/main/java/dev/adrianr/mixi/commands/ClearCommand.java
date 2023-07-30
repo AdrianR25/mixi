@@ -1,5 +1,6 @@
 package dev.adrianr.mixi.commands;
 
+import dev.adrianr.mixi.misc.ConfigHandler;
 import dev.adrianr.mixi.misc.MessageComposer;
 import dev.adrianr.mixi.audio.TrackScheduler;
 import dev.adrianr.mixi.audio.TrackSchedulerInstance;
@@ -12,6 +13,7 @@ public class ClearCommand extends ListenerAdapter {
         super.onSlashCommandInteraction(event);
         if (!event.getName().equals("clear")) return;
         if (!event.isFromGuild()) return;
+        if (!event.getChannel().getId().equals(ConfigHandler.getProperty("musicTextChannel"))) return;
 
         // Tell discord we received the command, send a thinking... message to the user
         event.deferReply().queue();

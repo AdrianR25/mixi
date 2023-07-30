@@ -6,6 +6,7 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import dev.adrianr.mixi.misc.ConfigHandler;
 import dev.adrianr.mixi.misc.MessageComposer;
 import dev.adrianr.mixi.audio.AudioPlayerManagerInstance;
 import dev.adrianr.mixi.audio.AudioPlayerSendHandler;
@@ -25,6 +26,8 @@ public class PlayCommand extends ListenerAdapter {
         super.onSlashCommandInteraction(event);
         if (!event.getName().equals("play")) return;
         if (!event.isFromGuild()) return;
+        if (!event.getChannel().getId().equals(ConfigHandler.getProperty("musicTextChannel"))) return;
+        
         String identifier = event.getOption("identifier").getAsString();
         if (!identifier.startsWith("http://") && !identifier.startsWith("https://")) identifier = "ytsearch:" + identifier;
 

@@ -6,6 +6,7 @@ import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import dev.adrianr.mixi.App;
+import dev.adrianr.mixi.misc.ConfigHandler;
 import dev.adrianr.mixi.misc.MessageComposer;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
@@ -41,7 +42,7 @@ public class TrackScheduler extends AudioEventAdapter {
             System.out.println("RETRYING TRACK: " + track.getIdentifier());
         } else {
             System.out.println("STARTED PLAYING TRACK: " + track.getIdentifier());
-            App.getJDA().getChannelById(MessageChannel.class, "748313304400920619").sendMessageEmbeds(MessageComposer.getPlayingTrackMessageEmbed(track))
+            App.getJDA().getChannelById(MessageChannel.class, ConfigHandler.getProperty("musicTextChannel")).sendMessageEmbeds(MessageComposer.getPlayingTrackMessageEmbed(track))
                     .addActionRow(
                             Button.primary("next", "Siguiente"),
                             Button.primary("pause", "Pausar"))
@@ -70,7 +71,7 @@ public class TrackScheduler extends AudioEventAdapter {
         } else if (endReason == AudioTrackEndReason.STOPPED) sendMessage = true;
 
         if (sendMessage) {
-            App.getJDA().getChannelById(MessageChannel.class, "748313304400920619").sendMessageEmbeds(MessageComposer.getFinishedQueueMessageEmbed())
+            App.getJDA().getChannelById(MessageChannel.class, ConfigHandler.getProperty("musicTextChannel")).sendMessageEmbeds(MessageComposer.getFinishedQueueMessageEmbed())
                     .addActionRow(
                             Button.danger("disconnect", "Desconectar"))
                     .queue();
