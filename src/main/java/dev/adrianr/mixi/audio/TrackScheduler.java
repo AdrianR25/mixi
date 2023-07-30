@@ -11,11 +11,13 @@ import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 
 public class TrackScheduler extends AudioEventAdapter {
 
     private final AudioPlayer player;
     private final ArrayDeque<AudioTrack> queue = new ArrayDeque<>();
+    private final ArrayList<String> retriedTracks = new ArrayList<>();
 
     public TrackScheduler(AudioPlayer player) {
         this.player = player;
@@ -34,20 +36,31 @@ public class TrackScheduler extends AudioEventAdapter {
     @Override
     public void onTrackStart(AudioPlayer player, AudioTrack track) {
         // A track started playing
-        System.out.println("STARTED PLAYING TRACK: " + track.getIdentifier());
-        App.getJDA().getChannelById(MessageChannel.class, "748313304400920619").sendMessageEmbeds(MessageComposer.getPlayingTrackMessageEmbed(track))
-                .addActionRow(
-                        Button.primary("next", "Siguiente"),
-                        Button.primary("pause", "Pausar"))
-                .queue();
+        queue.remove(track);
+        if (retriedTracks.contains(track.getIdentifier())) {
+            System.out.println("RETRYING TRACK: " + track.getIdentifier());
+        } else {
+            System.out.println("STARTED PLAYING TRACK: " + track.getIdentifier());
+            App.getJDA().getChannelById(MessageChannel.class, "748313304400920619").sendMessageEmbeds(MessageComposer.getPlayingTrackMessageEmbed(track))
+                    .addActionRow(
+                            Button.primary("next", "Siguiente"),
+                            Button.primary("pause", "Pausar"))
+                    .queue();
+        }
     }
 
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
         boolean sendMessage = false;
+
+        // retry playing track once if it failed, sometimes fixes error 403
+        if (endReason == AudioTrackEndReason.FINISHED && !retriedTracks.contains(track.getIdentifier())) {
+            player.playTrack(track);
+            retriedTracks.add(track.getIdentifier());
+        }
+
         if (endReason.mayStartNext) {
             // Start next track
-            queue.remove(track);
             if (!queue.isEmpty()) {
                 player.playTrack(queue.getFirst());
             } else {
@@ -88,7 +101,7 @@ public class TrackScheduler extends AudioEventAdapter {
     public void queue(AudioTrack track) {
         queue.add(track);
         System.out.println("ADDED TRACK TO THE QUEUE: " + track.getInfo().title);
-        if (queue.size() == 1) {
+        if (queue.size() == 1 && player.getPlayingTrack() == null) {
             player.playTrack(track);
         }
     }
@@ -99,8 +112,6 @@ public class TrackScheduler extends AudioEventAdapter {
     }
 
     public void next() {
-        if (!queue.isEmpty()) queue.removeFirst();
-
         if (!queue.isEmpty()) {
             player.playTrack(queue.getFirst());
         } else {
