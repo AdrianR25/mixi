@@ -26,6 +26,7 @@ public class PlayCommand extends ListenerAdapter {
         if (!event.getName().equals("play")) return;
         if (!event.isFromGuild()) return;
         String identifier = event.getOption("identifier").getAsString();
+        if (!identifier.startsWith("http://") && !identifier.startsWith("https://")) identifier = "ytsearch:" + identifier;
 
         // Tell discord we received the command, send a thinking... message to the user
         event.deferReply().queue();
@@ -68,7 +69,6 @@ public class PlayCommand extends ListenerAdapter {
 
         VoiceChannel voiceChannel = event.getGuild().getVoiceChannelById("751817924288970753");
         AudioManager audioManager = event.getGuild().getAudioManager();
-        System.out.println("is connected: " + audioManager.isConnected());
         if (!audioManager.isConnected()){
             audioManager.setSelfDeafened(true);
             audioManager.openAudioConnection(voiceChannel);
